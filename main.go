@@ -30,7 +30,19 @@ var (
 	pixel00Loc        = viewportUpperLeft.add(pixelDeltaU.add(pixelDeltaV).scale(0.5))
 )
 
+func hitSphere(center Vec3, radius float64, r Ray) bool {
+	oc := center.subtract(r.origin)
+	a := r.direction.dot(r.direction)
+	b := -2.0 * oc.dot(r.direction)
+	c := oc.dot(oc) - radius*radius
+	discriminant := b*b - 4*a*c
+	return discriminant > 0
+}
+
 func (r Ray) rayColor() Color {
+	if (hitSphere(Vec3{0, 0, -1}, 0.5, r)) {
+		return Color{r: 1.0, g: 0.0, b: 0.0}
+	}
 	unitDirection := r.direction.unitVector()
 	a := 0.5 * (unitDirection.y + 1.0)
 	return Color{r: 1.0, g: 1.0, b: 1.0}.scale(1.0 - a).add(Color{r: 0.5, g: 0.7, b: 1.0}.scale(a))
