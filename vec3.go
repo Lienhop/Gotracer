@@ -6,6 +6,10 @@ type Vec3 struct {
 	x, y, z float64
 }
 
+func (v Vec3) toColor() Color {
+	return Color{v.x, v.y, v.z}
+}
+
 func (v Vec3) subtract(w Vec3) Vec3 {
 	return Vec3{v.x - w.x, v.y - w.y, v.z - w.z}
 }
