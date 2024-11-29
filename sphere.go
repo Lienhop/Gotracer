@@ -21,7 +21,7 @@ func (h *hitRecord) setFaceNormal(r Ray, outwardNormal Vec3) {
 }
 
 type hittable interface {
-	hit(r Ray, tMin float64, tMax float64, rec *hitRecord) bool
+	hit(r Ray, rayT interval, rec *hitRecord) bool
 }
 
 type hittableList struct {
@@ -36,12 +36,12 @@ func (l *hittableList) clear() {
 	l.list = nil
 }
 
-func (l hittableList) hit(r Ray, tMin float64, tMax float64, rec *hitRecord) bool {
+func (l hittableList) hit(r Ray, rayT interval, rec *hitRecord) bool {
 	tempRec := hitRecord{}
 	hitAnything := false
-	closestSoFar := tMax
+	closestSoFar := rayT.max
 	for _, object := range l.list {
-		if object.hit(r, tMin, closestSoFar, &tempRec) {
+		if object.hit(r, interval{rayT.min, closestSoFar}, &tempRec) {
 			hitAnything = true
 			closestSoFar = tempRec.t
 			*rec = tempRec
@@ -55,7 +55,7 @@ type Sphere struct {
 	radius float64
 }
 
-func (s Sphere) hit(r Ray, tMin float64, tMax float64, rec *hitRecord) bool {
+func (s Sphere) hit(r Ray, rayT interval, rec *hitRecord) bool {
 	oc := s.center.subtract(r.origin)
 	a := r.direction.lengthSquared()
 	h := r.direction.dot(oc)
@@ -69,9 +69,9 @@ func (s Sphere) hit(r Ray, tMin float64, tMax float64, rec *hitRecord) bool {
 	sqrtd := math.Sqrt(discriminant)
 
 	root := (h - sqrtd) / a
-	if root <= tMin || root >= tMax {
+	if !rayT.surrounds(root) {
 		root = (h + sqrtd) / a
-		if root <= tMin || root >= tMax {
+		if !rayT.surrounds(root) {
 			return false
 		}
 	}

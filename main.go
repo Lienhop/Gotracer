@@ -18,7 +18,7 @@ var (
 	focalLength    = 1.0
 	viewportHeight = 2.0
 	viewportWidth  = aspectRatio * viewportHeight
-	cameraCenter   = Vec3{0.0, 0.0, 0}
+	cameraCenter   = Vec3{0.0, 0.0, 0.5}
 
 	world = hittableList{}
 
@@ -37,7 +37,7 @@ var (
 
 func (r Ray) rayColor(world hittable) Color {
 	hitRecord := hitRecord{}
-	if world.hit(r, 0.001, infinity, &hitRecord) {
+	if world.hit(r, interval{0, infinity}, &hitRecord) {
 		return hitRecord.normal.add(Vec3{1, 1, 1}).scale(0.5).toColor()
 	}
 
