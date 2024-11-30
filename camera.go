@@ -7,10 +7,12 @@ import (
 )
 
 type Camera struct {
-	center      Vec3
-	aspectRatio float64
-	imageWidth  int
-	imageHeight int
+	center            Vec3
+	aspectRatio       float64
+	imageWidth        int
+	imageHeight       int
+	samplesPerPixel   int
+	pixelSamplesScale float64
 
 	focalLength    float64
 	viewportHeight float64
@@ -30,6 +32,8 @@ func (c *Camera) init() {
 	c.imageWidth = 400
 	c.imageHeight = int(float64(c.imageWidth) / c.aspectRatio)
 	c.center = Vec3{0, 0, 0.5}
+	c.samplesPerPixel = 100
+	c.pixelSamplesScale = 1 / float64(c.samplesPerPixel)
 
 	// Viewport Dimensions
 	c.focalLength = 1.0
@@ -63,13 +67,22 @@ func (c Camera) render(world hittable) {
 	for i := 0; i < c.imageHeight; i++ {
 		fmt.Printf("\rLine rendered: %d/%d", i+1, c.imageHeight)
 		for j := 0; j < c.imageWidth; j++ {
-			pixelCenter := c.pixel00Loc.add(c.pixelDeltaU.scale(float64(j))).add(c.pixelDeltaV.scale(float64(i)))
-			rayDirection := pixelCenter.subtract(c.center)
-			ray := Ray{origin: c.center, direction: rayDirection}
-			pixelColor := ray.rayColor(world)
-			//color := Color{r: float64(i) / float64(imgWidth-1), g: float64(j) / float64(imgHeight-1), b: 0.5}
+			pixelColor := Color{r: 0, g: 0, b: 0}
+			for s := 0; s < c.samplesPerPixel; s++ {
+				ray := c.getRay(j, i)
+				pixelColor = pixelColor.add(ray.rayColor(world))
+			}
+			pixelColor = pixelColor.scale(c.pixelSamplesScale)
 			fmt.Fprintf(writer, pixelColor.writeColor())
 		}
 	}
 	writer.Flush()
+}
+
+func (c Camera) getRay(x, y int) Ray {
+	offset := sampleSquare()
+	pixelSample := c.pixel00Loc.add(c.pixelDeltaU.scale(float64(x) + offset.x)).add(c.pixelDeltaV.scale(float64(y) + offset.y))
+	rayOrigin := c.center
+	rayDirection := pixelSample.subtract(rayOrigin)
+	return Ray{origin: rayOrigin, direction: rayDirection}
 }

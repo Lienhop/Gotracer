@@ -9,7 +9,11 @@ type Color struct {
 }
 
 func (c Color) writeColor() string {
-	return fmt.Sprintf("%d %d %d\n", int(c.r*255), int(c.g*255), int(c.b*255))
+	intensity := interval{0.000, 0.999}
+	r := int(intensity.clamp(c.r) * 256)
+	g := int(intensity.clamp(c.g) * 256)
+	b := int(intensity.clamp(c.b) * 256)
+	return fmt.Sprintf("%d %d %d\n", r, g, b)
 }
 
 func (c Color) add(w Color) Color {
