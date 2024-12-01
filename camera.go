@@ -70,7 +70,7 @@ func (c Camera) render(world hittable) {
 			pixelColor := Color{r: 0, g: 0, b: 0}
 			for s := 0; s < c.samplesPerPixel; s++ {
 				ray := c.getRay(j, i)
-				pixelColor = pixelColor.add(ray.rayColor(world))
+				pixelColor = pixelColor.add(rayColor(ray, world))
 			}
 			pixelColor = pixelColor.scale(c.pixelSamplesScale)
 			fmt.Fprintf(writer, pixelColor.writeColor())

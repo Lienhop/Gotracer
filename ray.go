@@ -13,10 +13,12 @@ func (r Ray) at(t float64) Vec3 {
 	return r.origin.add(r.direction.scale(t))
 }
 
-func (r Ray) rayColor(world hittable) Color {
+func rayColor(r Ray, world hittable) Color {
 	hitRecord := hitRecord{}
 	if world.hit(r, interval{0, infinity}, &hitRecord) {
-		return hitRecord.normal.add(Vec3{1, 1, 1}).scale(0.5).toColor()
+		direction := hitRecord.normal.randomOnHemisphere()
+		return rayColor(Ray{hitRecord.p, direction}, world).scale(0.5)
+		//return hitRecord.normal.add(Vec3{1, 1, 1}).scale(0.5).toColor()
 	}
 
 	unitDirection := r.direction.unitVector()
