@@ -13,6 +13,7 @@ type Camera struct {
 	imageHeight       int
 	samplesPerPixel   int
 	pixelSamplesScale float64
+	maxDepth          int
 
 	focalLength    float64
 	viewportHeight float64
@@ -29,11 +30,12 @@ type Camera struct {
 
 func (c *Camera) init() {
 	c.aspectRatio = 16.0 / 9.0
-	c.imageWidth = 800
+	c.imageWidth = 400
 	c.imageHeight = int(float64(c.imageWidth) / c.aspectRatio)
 	c.center = Vec3{0, 0, 0.5}
 	c.samplesPerPixel = 100
 	c.pixelSamplesScale = 1 / float64(c.samplesPerPixel)
+	c.maxDepth = 50
 
 	// Viewport Dimensions
 	c.focalLength = 1.0
@@ -70,7 +72,7 @@ func (c Camera) render(world hittable) {
 			pixelColor := Color{r: 0, g: 0, b: 0}
 			for s := 0; s < c.samplesPerPixel; s++ {
 				ray := c.getRay(j, i)
-				pixelColor = pixelColor.add(rayColor(ray, world))
+				pixelColor = pixelColor.add(rayColor(ray, world, c.maxDepth))
 			}
 			pixelColor = pixelColor.scale(c.pixelSamplesScale)
 			fmt.Fprintf(writer, pixelColor.writeColor())
