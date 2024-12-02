@@ -20,7 +20,7 @@ func rayColor(r Ray, world hittable, depth int) Color {
 	}
 
 	hitRecord := hitRecord{}
-	if world.hit(r, interval{0, infinity}, &hitRecord) {
+	if world.hit(r, interval{0.001, infinity}, &hitRecord) {
 		direction := hitRecord.normal.randomOnHemisphere()
 		return rayColor(Ray{hitRecord.p, direction}, world, depth-1).scale(0.5)
 		//return hitRecord.normal.add(Vec3{1, 1, 1}).scale(0.5).toColor()
