@@ -30,9 +30,9 @@ type Camera struct {
 
 func (c *Camera) init() {
 	c.aspectRatio = 16.0 / 9.0
-	c.imageWidth = 1920
+	c.imageWidth = 800
 	c.imageHeight = int(float64(c.imageWidth) / c.aspectRatio)
-	c.center = Vec3{0, 0, 0.1}
+	c.center = Vec3{0, 0, 2.5}
 	c.samplesPerPixel = 100
 	c.pixelSamplesScale = 1 / float64(c.samplesPerPixel)
 	c.maxDepth = 50

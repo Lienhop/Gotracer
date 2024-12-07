@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Color struct {
 	r float64
@@ -8,12 +11,24 @@ type Color struct {
 	b float64
 }
 
+func linearToGamma(linearComp float64) float64 {
+	if linearComp > 0 {
+		return math.Sqrt(linearComp)
+	}
+	return 0
+}
+
 func (c Color) writeColor() string {
 	intensity := interval{0.000, 0.999}
-	r := int(intensity.clamp(c.r) * 256)
-	g := int(intensity.clamp(c.g) * 256)
-	b := int(intensity.clamp(c.b) * 256)
-	return fmt.Sprintf("%d %d %d\n", r, g, b)
+
+	r := linearToGamma(c.r)
+	g := linearToGamma(c.g)
+	b := linearToGamma(c.b)
+
+	rByte := int(intensity.clamp(r) * 256)
+	gByte := int(intensity.clamp(g) * 256)
+	bByte := int(intensity.clamp(b) * 256)
+	return fmt.Sprintf("%d %d %d\n", rByte, gByte, bByte)
 }
 
 func (c Color) add(w Color) Color {
