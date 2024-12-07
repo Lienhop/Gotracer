@@ -45,3 +45,8 @@ func (v Vec3) cross(w Vec3) Vec3 {
 func (v Vec3) unitVector() Vec3 {
 	return v.divide(v.length())
 }
+
+func (v Vec3) nearZero() bool {
+	s := 1e-8
+	return math.Abs(v.x) < s && math.Abs(v.y) < s && math.Abs(v.z) < s
+}
