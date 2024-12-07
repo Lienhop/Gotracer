@@ -21,8 +21,12 @@ func rayColor(r Ray, world hittable, depth int) Color {
 
 	hitRecord := hitRecord{}
 	if world.hit(r, interval{0.001, infinity}, &hitRecord) {
-		direction := hitRecord.normal.add(randomUnitVector())
-		return rayColor(Ray{hitRecord.p, direction}, world, depth-1).scale(0.5)
+		scattered := Ray{}
+		attenuation := Color{}
+		if hitRecord.material.scatter(r, &hitRecord, &attenuation, &scattered) {
+			return attenuation.multiply(rayColor(scattered, world, depth-1))
+		}
+		return Color{r: 0, g: 0, b: 0}
 	}
 
 	unitDirection := r.direction.unitVector()

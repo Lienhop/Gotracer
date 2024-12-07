@@ -50,3 +50,7 @@ func (v Vec3) nearZero() bool {
 	s := 1e-8
 	return math.Abs(v.x) < s && math.Abs(v.y) < s && math.Abs(v.z) < s
 }
+
+func (v Vec3) reflect(n Vec3) Vec3 {
+	return v.subtract(n.scale(2 * v.dot(n)))
+}

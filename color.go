@@ -38,3 +38,7 @@ func (c Color) add(w Color) Color {
 func (c Color) scale(s float64) Color {
 	return Color{c.r * s, c.g * s, c.b * s}
 }
+
+func (c Color) multiply(w Color) Color {
+	return Color{c.r * w.r, c.g * w.g, c.b * w.b}
+}

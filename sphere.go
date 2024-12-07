@@ -7,7 +7,7 @@ import (
 type hitRecord struct {
 	p         Vec3
 	normal    Vec3
-	material  *Material
+	material  Material
 	t         float64
 	frontFace bool
 }
@@ -54,7 +54,7 @@ func (l hittableList) hit(r Ray, rayT interval, rec *hitRecord) bool {
 type Sphere struct {
 	center   Vec3
 	radius   float64
-	material *Material
+	material Material
 }
 
 func (s Sphere) hit(r Ray, rayT interval, rec *hitRecord) bool {
