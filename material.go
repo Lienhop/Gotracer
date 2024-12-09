@@ -58,7 +58,7 @@ func (d Dielectric) scatter(rIn Ray, rec *hitRecord, attenuation *Color, scatter
 
 	var direction Vec3
 
-	if cannotRefract {
+	if cannotRefract || reflectance(cosTheta, ri) > randomDouble() {
 		direction = unitDirection.reflect(rec.normal)
 	} else {
 		direction = unitDirection.refract(rec.normal, ri)
@@ -66,4 +66,11 @@ func (d Dielectric) scatter(rIn Ray, rec *hitRecord, attenuation *Color, scatter
 
 	*scattered = Ray{rec.p, direction}
 	return true
+}
+
+// Polynomial Schlick approximation for reflectivity
+func reflectance(cosine, refIdx float64) float64 {
+	r0 := (1 - refIdx) / (1 + refIdx)
+	r0 = r0 * r0
+	return r0 + (1-r0)*math.Pow(1-cosine, 5)
 }
