@@ -54,3 +54,10 @@ func (v Vec3) nearZero() bool {
 func (v Vec3) reflect(n Vec3) Vec3 {
 	return v.subtract(n.scale(2 * v.dot(n)))
 }
+
+func (v Vec3) refract(n Vec3, etaiOverEtat float64) Vec3 {
+	cosTheta := math.Min(v.scale(-1).dot(n), 1.0)
+	rOutPerp := v.add(n.scale(cosTheta)).scale(etaiOverEtat)
+	rOutParallel := n.scale(-math.Sqrt(math.Abs(1.0 - rOutPerp.lengthSquared())))
+	return rOutPerp.add(rOutParallel)
+}
